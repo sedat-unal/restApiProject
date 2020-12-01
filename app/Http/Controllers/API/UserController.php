@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers\API;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
@@ -21,7 +22,11 @@ class UserController extends Controller
                 $success['message'] = "User password changed successfully";
                 $success['new_password'] = $input['new_password'];
                 return response()->json(['success' => $success, $this->successStatus]);
+            }else{
+                return response()->json(['error' => 'While changing the password its error'], 401);
             }
+        }else{
+            return response()->json(['error' => 'This email is not registered in our system.'], 401);
         }
     }
 
