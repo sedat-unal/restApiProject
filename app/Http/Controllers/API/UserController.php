@@ -4,11 +4,27 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
     public $successStatus = 200;
+
+    public function post_ResetPassword(Request $request){
+        $input = $request->all();
+        $input['old_password'] = bcrypt($input['old_password']);
+        $input['new_password'] = bcrypt($input['new_password']);
+        $sql = DB::table('users')->where('email', $input['email'])->first();
+        if($sql){
+            $update = DB::update('UPDATE users SET users.password = "'. $input['new_password'] .'" WHERE users.email = "'. $input['email'] .'" ');
+            if ($update){
+                $success['message'] = "User password changed successfully";
+                $success['new_password'] = $input['new_password'];
+                return response()->json(['success' => $success, $this->successStatus]);
+            }
+        }
+    }
 
     public function post_Login(){
         if(Auth::attempt(['email' => request('email'), 'password' => request('password')])){
