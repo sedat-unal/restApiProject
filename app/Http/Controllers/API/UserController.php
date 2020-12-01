@@ -13,7 +13,6 @@ class UserController extends Controller
 
     public function post_ResetPassword(Request $request){
         $input = $request->all();
-        $input['old_password'] = bcrypt($input['old_password']);
         $input['new_password'] = bcrypt($input['new_password']);
         $sql = DB::table('users')->where('email', $input['email'])->first();
         if($sql){
