@@ -23,10 +23,10 @@ class UserController extends Controller
                 $success['new_password'] = $input['new_password'];
                 return response()->json(['success' => $success, $this->successStatus]);
             }else{
-                return response()->json(['error' => 'While changing the password its error'], 401);
+                return response()->json(['error' => 'While changing the password its error'], 400);
             }
         }else{
-            return response()->json(['error' => 'This email is not registered in our system.'], 401);
+            return response()->json(['error' => 'This email is not registered in our system.'], 404);
         }
     }
 
