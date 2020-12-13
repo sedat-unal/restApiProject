@@ -6,8 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Subcategories extends Model
 {
-    public function subcategories(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
-    {
-        return $this->belongsToMany('App\Category');
-    }
+    protected $fillable = [
+        'sub_name', 'root_catID'
+    ];
 }

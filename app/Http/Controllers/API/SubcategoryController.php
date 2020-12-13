@@ -2,28 +2,22 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
-use App\Category;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use App\Subcategories;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-
-class CategoryController extends Controller
+use Illuminate\Support\Facades\Validator;
+class SubcategoryController extends Controller
 {
     public $successStatus = 200;
-
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        if ($request == NULL){
-            return response()->json(['error'], 404);
-        }
-        $id = $request->all();
-
+        //
     }
 
     /**
@@ -34,16 +28,18 @@ class CategoryController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), [
-           'name' => 'required',
-           'cat_subID' => 'required'
+            'sub_name' => 'required',
+            'root_catID' => 'required'
         ]);
-        if ($validator->fails()){
+        if ($validator->fails())
+        {
             return response()->json(['error' => $validator->errors()], 401);
         }
-        $input =  $request->all();
-        $category = Category::create($input);
-        $success['message'] = "Category created successfully";
-        $success['category_name'] = $category->name;
+        $input = $request->all();
+        $subCategory = Subcategories::create($input);
+        $success['message'] = "Subcategory Created Successfully";
+        $success['sub_name'] = $subCategory->sub_name;
+
         return response()->json(['success' => $success], $this->successStatus);
     }
 
@@ -61,31 +57,30 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Category  $category
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show()
     {
-        $sql = DB::table('categories')->get();
-        if(DB::table('categories')->count() == 0)
+        $sql = DB::table('subcategories')->get();
+        if(DB::table('subcategories')->count() == 0)
         {
-            return response()->json(['error' => 'Has not been created a category'], 400);
+            return response()->json(['error' => 'Has not been created a Subcategory'], 400);
         }
         else
         {
             return response()->json([$sql], $this->successStatus);
 
         }
-
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Category  $category
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Category $category)
+    public function edit($id)
     {
         //
     }
@@ -94,10 +89,10 @@ class CategoryController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Category  $category
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category)
+    public function update(Request $request, $id)
     {
         //
     }
@@ -105,10 +100,10 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Category  $category
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy($id)
     {
         //
     }

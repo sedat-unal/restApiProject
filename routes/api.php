@@ -23,3 +23,6 @@ Route::post('login', 'App\Http\Controllers\API\UserController@post_Login');
 Route::post('reset-password', 'App\Http\Controllers\API\UserController@post_ResetPassword');
 
 Route::post('add-category', 'App\Http\Controllers\API\CategoryController@create');
+Route::post('add-subcategory', 'App\Http\Controllers\API\SubcategoryController@create');
+Route::get('list-category', 'App\Http\Controllers\API\CategoryController@show');
+Route::get('list-subcategory', 'App\Http\Controllers\API\SubcategoryController@show');
