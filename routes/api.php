@@ -22,4 +22,4 @@ Route::post('register', 'App\Http\Controllers\API\UserController@post_Register')
 Route::post('login', 'App\Http\Controllers\API\UserController@post_Login');
 Route::post('reset-password', 'App\Http\Controllers\API\UserController@post_ResetPassword');
 
-Route::post('category', 'App\Http\Controllers\API\CategoryController@create');
+Route::post('add-category', 'App\Http\Controllers\API\CategoryController@create');
