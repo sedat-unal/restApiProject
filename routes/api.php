@@ -17,7 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-
+Route::get('details', 'App\Http\Controllers\API\UserController@details');
 Route::post('register', 'App\Http\Controllers\API\UserController@post_Register');
 Route::post('login', 'App\Http\Controllers\API\UserController@post_Login');
 Route::post('reset-password', 'App\Http\Controllers\API\UserController@post_ResetPassword');
+
+Route::post('category', 'App\Http\Controllers\API\CategoryController@create');
