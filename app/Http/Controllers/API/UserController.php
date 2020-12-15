@@ -67,7 +67,7 @@ class UserController extends Controller
      */
     public function details()
     {
-        // Get all users or only one user details.
+        // Get all users or only one user details. http://127.0.0.1:8000/api/details?id=all or http://127.0.0.1:8000/api/details?id=number
         $id = $_GET['id'];
         if ($id == "all")
         {
