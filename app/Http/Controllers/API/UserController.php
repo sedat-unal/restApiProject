@@ -17,7 +17,7 @@ class UserController extends Controller
         $input['new_password'] = bcrypt($input['new_password']);
         $sql = DB::table('users')->where('email', $input['email'])->first();
         if($sql){
-            $update = DB::update('UPDATE users SET users.password = "'. $input['new_password'] .'" WHERE users.email = "'. $input['email'] .'" ');
+            $update = DB::table('users')->where('email', $input['email'])->update(['password' => $input['new_password']]);
             if ($update){
                 $success['message'] = "User password changed successfully";
                 $success['new_password'] = $input['new_password'];
@@ -55,7 +55,7 @@ class UserController extends Controller
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
-        $success['message'] = "User registrated successfully";
+        $success['message'] = "User successfully registered";
         $success['token'] =  $user->createToken('MyApp')->accessToken;
         $success['name'] =  $user->name;
         return response()->json(['success'=>$success], $this->successStatus);
@@ -63,11 +63,22 @@ class UserController extends Controller
     /**
      * details api
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function details()
     {
-        $user = Auth::user();
-        return response()->json(['success' => $user], $this-> successStatus);
+        // Get all users or only one user details.
+        $id = $_GET['id'];
+        if ($id == "all")
+        {
+            $queryAll = DB::table('users')->get();
+            foreach ($queryAll as $row)
+            {
+                $users[] = $row;
+            }
+            return response()->json([$users], $this->successStatus);
+        }
+        $query = DB::table('users')->find($id);
+        return response()->json([$query], $this->successStatus);
     }
 }
