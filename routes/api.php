@@ -17,12 +17,13 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('details', 'App\Http\Controllers\API\UserController@details');
+Route::get('list-users', 'App\Http\Controllers\API\UserController@details');
 Route::post('register', 'App\Http\Controllers\API\UserController@post_Register');
 Route::post('login', 'App\Http\Controllers\API\UserController@post_Login');
 Route::post('reset-password', 'App\Http\Controllers\API\UserController@post_ResetPassword');
 
-Route::post('add-category', 'App\Http\Controllers\API\CategoryController@create');
-Route::post('add-subcategory', 'App\Http\Controllers\API\SubcategoryController@create');
-Route::get('list-category', 'App\Http\Controllers\API\CategoryController@show');
+Route::post('add-category', 'App\Http\Controllers\API\CategoryController@createCategoryNode');
+Route::get('list-category', 'App\Http\Controllers\API\CategoryController@listCategoryNode');
+
+Route::post('add-subcategory', 'App\Http\Controllers\API\CategoryController@createSubcategory');
 Route::get('list-subcategory', 'App\Http\Controllers\API\SubcategoryController@show');

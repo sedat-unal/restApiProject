@@ -5,111 +5,58 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Category;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
     public $successStatus = 200;
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
+    // create main category
+    public function createCategoryNode(Request $request)
     {
-        if ($request == NULL){
-            return response()->json(['error'], 404);
-        }
-        $id = $request->all();
-
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-           'name' => 'required',
-           'cat_subID' => 'required'
-        ]);
-        if ($validator->fails()){
-            return response()->json(['error' => $validator->errors()], 401);
-        }
-        $input =  $request->all();
-        $category = Category::create($input);
-        $success['message'] = "Category created successfully";
-        $success['category_name'] = $category->name;
-        return response()->json(['success' => $success], $this->successStatus);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function show()
-    {
-        $sql = DB::table('categories')->get();
-        if(DB::table('categories')->count() == 0)
+        $name = $request->all();
+        $node = Category::create($name);
+        if (!$node)
         {
-            return response()->json(['error' => 'Has not been created a category'], 400);
+            return response()->json(['error' => "error"], 404);
         }
-        else
+        return response()->json(['success' => $node], $this->successStatus);
+    }
+
+    public function createSubcategory(Request $request)
+    {
+        $input = $request->all();
+        $subcategoryName[] = $input['subcategory_name'];
+        $parent = $input['parent_id'];
+
+        $query = DB::table('categories')->where('id', $parent)->first();
+        if ($query->count() == 0)
         {
-            return response()->json([$sql], $this->successStatus);
-
+            return response()->json(['error' => "error"], 404);
+        }
+        $update = DB::table('categories')->where('id', $parent)->update(['parent_id' => $parent]);
+        if($update = false)
+        {
+            return response()->json(['error' => 'The subcategory has not been created. Because main category can not found'], 401);
         }
 
+        //$subcategory = Category::create($subcategoryName, $parent);
+
+        //$parent->children()->create($subcategoryName, $parent);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Category $category)
+    // List all categories
+    public function listCategoryNode()
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Category $category)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Category  $category
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Category $category)
-    {
-        //
+        $queryAll = DB::table('categories')->get();
+        if($queryAll->count() == 0)
+        {
+            return response()->json(["error" => "has not been created any category"], 401);
+        }
+        foreach ($queryAll as $item)
+        {
+            $list[] = $item;
+        }
+        return response()->json([$list], $this->successStatus);
     }
 }

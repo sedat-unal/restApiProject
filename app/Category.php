@@ -2,10 +2,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Kalnoy\Nestedset\NodeTrait;
+
 class Category extends Model
 {
-    protected $fillable = [
-        'name', 'cat_subID'
-    ];
+    use SoftDeletes, NodeTrait;
 
+    protected $fillable = array('name', 'parent_id');
 }
