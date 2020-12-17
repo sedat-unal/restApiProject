@@ -2,54 +2,76 @@
 
 namespace App\Http\Controllers\API;
 
+use http\Env\Response;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Category;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
     public $successStatus = 200;
 
     // create main category
-    public function createCategoryNode(Request $request)
+    public function createCategory(Request $request)
     {
-        $name = $request->all();
-        $node = Category::create($name);
-        if (!$node)
+        $validator = Validator::make($request->all(), [
+           'name' => 'required|min:3|unique:categories',
+        ]);
+        if($validator->fails())
         {
-            return response()->json(['error' => "error"], 404);
+            return response()->json(['error' => $validator->errors()], 401);
         }
-        return response()->json(['success' => $node], $this->successStatus);
+        $category                   = Category::create($request->all());
+        $success["message"]         = "The category has been created successfully";
+        $success["category_id"]     = $category->id;
+        $success["category_name"]   = $category->name;
+        $success["category_parent"] = $category->parent_id;
+
+        return response()->json(["success" => $success], $this->successStatus);
+
+        // if category_parent is null the category have not any children.
     }
 
     public function createSubcategory(Request $request)
     {
-        $input = $request->all();
-        $subcategoryName[] = $input['subcategory_name'];
-        $parent = $input['parent_id'];
-
-        $query = DB::table('categories')->where('id', $parent)->first();
-        if ($query->count() == 0)
+        $validor = Validator::make($request->all(), [
+            'name'          => 'required|min:3|unique:categories',
+            'parent_id'     => 'required'
+        ]);
+        if ($validor->fails())
         {
-            return response()->json(['error' => "error"], 404);
+            return \response()->json(['error' => $validor->errors()], 401);
         }
-        $update = DB::table('categories')->where('id', $parent)->update(['parent_id' => $parent]);
-        if($update = false)
-        {
-            return response()->json(['error' => 'The subcategory has not been created. Because main category can not found'], 401);
-        }
+        $subcategory = Category::create($request->all());
+        $success["message"]             = "The Subcategory has been created successfully";
+        $success["subcategory_id"]      = $subcategory->id;
+        $success["subcategory_name"]    = $subcategory->name;
+        $success["subcategory_parent"]  = $subcategory->parent_id;
+        return response()->json(["success" => $success], $this->successStatus);
 
-        //$subcategory = Category::create($subcategoryName, $parent);
-
-        //$parent->children()->create($subcategoryName, $parent);
     }
 
     // List all categories
-    public function listCategoryNode()
+    public function listCategory()
     {
-        $queryAll = DB::table('categories')->get();
+        $queryAll = DB::table('categories')->where('parent_id')->get();
         if($queryAll->count() == 0)
+        {
+            return response()->json(["error" => "has not been created any category"], 401);
+        }
+        foreach ($queryAll as $item)
+        {
+            $list[] = $item;
+        }
+        return response()->json([$list], $this->successStatus);
+    }
+
+    public function listSubcategory()
+    {
+        $queryAll = DB::table('categories')->where('parent_id', '<>', '', 'and')->get();
+        if ($queryAll->count() == 0)
         {
             return response()->json(["error" => "has not been created any category"], 401);
         }

@@ -22,8 +22,8 @@ Route::post('register', 'App\Http\Controllers\API\UserController@post_Register')
 Route::post('login', 'App\Http\Controllers\API\UserController@post_Login');
 Route::post('reset-password', 'App\Http\Controllers\API\UserController@post_ResetPassword');
 
-Route::post('add-category', 'App\Http\Controllers\API\CategoryController@createCategoryNode');
-Route::get('list-category', 'App\Http\Controllers\API\CategoryController@listCategoryNode');
+Route::post('add-category', 'App\Http\Controllers\API\CategoryController@createCategory');
+Route::get('list-category', 'App\Http\Controllers\API\CategoryController@listCategory');
 
 Route::post('add-subcategory', 'App\Http\Controllers\API\CategoryController@createSubcategory');
-Route::get('list-subcategory', 'App\Http\Controllers\API\SubcategoryController@show');
+Route::get('list-subcategory', 'App\Http\Controllers\API\CategoryController@listSubcategory');
